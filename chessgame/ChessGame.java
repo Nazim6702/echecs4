@@ -17,7 +17,8 @@ public class ChessGame {
 
     public void startGame() {
         initializePlayers();
-        board.initializeBoard();
+        board.setPlayers(players); // Passe les joueurs au plateau
+        board.initializeBoard(players); // Initialisation du plateau
         currentTurn = players.get(0); // Les rouges commencent
         System.out.println("Le jeu commence !");
         
@@ -26,10 +27,12 @@ public class ChessGame {
             checkGameState();
             rotateTurn();
         }
-
+    
         System.out.println("Le jeu est terminé !");
         displayScores();
     }
+    
+    
 
     private void initializePlayers() {
         players.add(new Player("Red", Color.RED, new AggressiveStrategy()));
@@ -51,11 +54,14 @@ public class ChessGame {
     
         Move move = player.makeMove(board);
         if (move != null && board.updateBoard(move)) {
-            System.out.println(player.getName() + " joue : " + move);
+            System.out.println(player.getName() + " joue : " 
+                + move.getFrom().toString() + " -> " + move.getTo().toString());
         } else {
             System.out.println(player.getName() + " ne peut pas jouer. Mouvement invalide.");
         }
+        
     }
+    
     
 
     private void checkGameState() {
@@ -73,11 +79,21 @@ public class ChessGame {
 
     private void rotateTurn() {
         int currentIndex = players.indexOf(currentTurn);
-        do {
+    
+        // Trouver le prochain joueur valide
+        for (int i = 0; i < players.size(); i++) {
             currentIndex = (currentIndex + 1) % players.size();
-        } while (players.get(currentIndex).isEliminated());
-        currentTurn = players.get(currentIndex);
+            if (!players.get(currentIndex).isEliminated()) {
+                currentTurn = players.get(currentIndex);
+                return;
+            }
+        }
+    
+        // Si aucun joueur valide trouvé, cela signifie que la partie est terminée
+        isGameOver = true;
+        System.out.println("Tous les joueurs sont éliminés. Fin de la partie !");
     }
+    
 
     private void displayScores() {
         System.out.println("Scores finaux :");
@@ -99,6 +115,7 @@ public class ChessGame {
                 }
             }
         }
+        System.out.println(player.getName() + " : Roi en position " + kingPosition);
         return false;
     }
 
@@ -106,21 +123,27 @@ public class ChessGame {
     
     
     private boolean isCheckmate(Player player, Board board) {
+        // Si le roi n'est pas en échec, pas besoin de vérifier l'échec et mat
         if (!isInCheck(player, board)) {
             return false;
         }
     
+        // Parcourir toutes les pièces du joueur pour vérifier si un mouvement légal peut sauver le roi
         for (Piece piece : player.getPieces()) {
-            List<Cell> moves = piece.getPossibleMoves(board);
-            for (Cell move : moves) {
-                Board simulatedBoard = board.simulateMove(piece, move);
+            List<Cell> possibleMoves = piece.getPossibleMoves(board);
+            for (Cell targetCell : possibleMoves) {
+                // Simuler le déplacement pour vérifier si le roi est toujours en échec
+                Board simulatedBoard = board.simulateMove(piece, targetCell);
                 if (!isInCheck(player, simulatedBoard)) {
-                    return false; // Un mouvement peut sauver le roi
+                    return false; // Au moins un mouvement peut sauver le roi
                 }
             }
         }
-     
-        return true; // Aucun mouvement légal ne sauve le roi
+
+        System.out.println("Vérification d'échec et mat pour " + player.getName());
+
+    
+        return true; // Aucun mouvement ne peut sauver le roi, échec et mat
     }
     
 }

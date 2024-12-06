@@ -17,8 +17,8 @@ public class Move {
         return to;
     }
 
-    public boolean isValid(Board board) {
-        // Logique pour vérifier si le mouvement est valide
-        return true;
+    @Override
+    public String toString() {
+        return "Move from " + from + " to " + to;
     }
 }

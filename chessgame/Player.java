@@ -15,18 +15,16 @@ public class Player {
     public Player(String name, Color color, Strategy strategy) {
         this.name = name;
         this.color = color;
-        this.strategy = strategy; // Initialisation de la stratégie
-
-        this.score = 0;
+        this.strategy = strategy; // Initialisation de la stratégiethis.score = 0;
         this.pieces = new ArrayList<>();
         this.eliminated = false;
     }
 
     public Move makeMove(Board board) {
         if (eliminated) {
-            return null; // Le joueur est éliminé
+            return null; // Si le joueur est éliminé, il ne joue pas
         }
-        return strategy.calculateMove(this, board);
+        return strategy.calculateMove(this, board); // Calcule le mouvement avec la stratégie assignée
     }
 
     public void eliminate() {
@@ -56,7 +54,8 @@ public class Player {
     public List<Piece> getPieces() {
         return pieces; // Retourne la liste des pièces du joueur
     }
-    
+
+   
 
     
 

@@ -9,13 +9,12 @@ public class AggressiveStrategy implements Strategy {
             List<Cell> possibleMoves = piece.getPossibleMoves(board);
             for (Cell target : possibleMoves) {
                 if (target.getPiece() != null && !target.getPiece().getOwner().equals(player)) {
-                    // Trouve une capture
-                    return new Move(board.getCell(piece.getPosition().getX(), piece.getPosition().getY()), target);
+                    // Capture une pièce ennemie
+                    return new Move(piece.getPosition(), target);
                 }
             }
         }
-
-        // Si aucune capture n'est possible, retourne un mouvement aléatoire
+        // Aucun mouvement agressif trouvé, jouer un mouvement aléatoire
         return makeRandomMove(player, board);
     }
 
@@ -23,7 +22,7 @@ public class AggressiveStrategy implements Strategy {
         for (Piece piece : player.getPieces()) {
             List<Cell> possibleMoves = piece.getPossibleMoves(board);
             if (!possibleMoves.isEmpty()) {
-                return new Move(board.getCell(piece.getPosition().getX(), piece.getPosition().getY()), possibleMoves.get(0));
+                return new Move(piece.getPosition(), possibleMoves.get(0)); // Premier mouvement possible
             }
         }
         return null; // Aucun mouvement disponible

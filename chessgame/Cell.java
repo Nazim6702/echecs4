@@ -31,4 +31,14 @@ public class Cell {
     public Piece getPiece() {
         return currentPiece;
     }
+
+    @Override
+    public String toString() {
+        if (currentPiece != null) {
+            return "[" + x + ", " + y + "] " + currentPiece.toString();
+        } else {
+            return "[" + x + ", " + y + "] Empty";
+        }
+    }
+
 }

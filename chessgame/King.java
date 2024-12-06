@@ -17,7 +17,8 @@ public class King extends Piece {
         // Vérifie toutes les cases adjacentes (8 directions)
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) continue; // Ignore la case actuelle
+                if (dx == 0 && dy == 0)
+                    continue; // Ignore la case actuelle
                 int newX = x + dx;
                 int newY = y + dy;
                 if (board.isValidCell(newX, newY)) {
@@ -31,4 +32,17 @@ public class King extends Piece {
 
         return moves;
     }
+
+    @Override
+    public King clone() {
+        return (King) super.clone();
+    }
+
+    @Override
+    public boolean move(Cell from, Cell to) {
+        int dx = Math.abs(from.getX() - to.getX());
+        int dy = Math.abs(from.getY() - to.getY());
+        return dx <= 1 && dy <= 1; // Une case autour
+    }
+
 }
